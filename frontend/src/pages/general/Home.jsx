@@ -10,20 +10,27 @@ const Home = () => {
   const [currentVideo, setCurrentVideo] = useState(0);
   const videoRefs = useRef([]);
 
-  useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_BACKEND_URL}/api/food`, { withCredentials: true })
-      .then((response) => {
-        setFoodItems(response.data.foodItems || []);
-        // console.log("Fecting food vidoes successfully", response.data.foodItems);
-      })
-      .catch((error) => {
-        // console.error("Error fetching food videos:", error);
-        if (error.response && error.response.status === 401) {
-          navigate("/user/login", { replace: true });
-        }
-      });
-  }, []);
+ useEffect(() => {
+  // Frontend check: localStorage / context me user hai ya nahi
+  const user = localStorage.getItem("user"); // ya tumhara auth state
+  if (!user) {
+    navigate("/user/login", { replace: true });
+    return; // exit useEffect
+  }
+
+  // Backend se food items fetch karo
+  axios
+    .get(`${import.meta.env.VITE_BACKEND_URL}/api/food`, { withCredentials: true })
+    .then((response) => {
+      setFoodItems(response.data.foodItems || []);
+    })
+    .catch((error) => {
+      if (error.response && error.response.status === 401) {
+        navigate("/user/login", { replace: true });
+      }
+    });
+}, [navigate]);
+
 
   const handleLogout = async () => {
   try {
