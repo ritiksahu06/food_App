@@ -1,0 +1,31 @@
+const express = require('express');
+const foodController = require('../controllers/food.controller');
+const authMiddleware = require('../middlewares/auth.middleware');
+const multer = require('multer');
+
+const router = express.Router();
+
+// Multer setup
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+
+// POST /api/food/  [Protected]
+router.post('/',
+  authMiddleware.authFoodPartnerMiddleware,
+  upload.single('video'),
+  foodController.createFood
+);
+
+
+//  Get  /api/food  [Protected]
+router.get('/', authMiddleware.authUserMiddleware, foodController.getFoodItems)
+
+router.post('/like', authMiddleware.authUserMiddleware, foodController.likeFood)
+
+router.post('/save', authMiddleware.authUserMiddleware, foodController.saveFood)
+
+router.get('/save', authMiddleware.authUserMiddleware, foodController.getSavedFood)
+
+
+module.exports = router;
