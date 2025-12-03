@@ -9,7 +9,7 @@ const Save = () => {
 
   useEffect(() => {
   axios
-    .get("http://localhost:4000/api/food/save", { withCredentials: true })
+    .get(`${import.meta.env.VITE_BACKEND_URL}/api/food/save`, { withCredentials: true })
     .then(response => {
       const savedFood = response.data.saveFood.map(item => ({
   _id: item._id || item.food?._id,

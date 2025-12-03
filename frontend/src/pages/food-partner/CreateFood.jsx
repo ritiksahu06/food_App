@@ -16,7 +16,7 @@ const CreateFood = () => {
     formData.append('description', description)
     formData.append('video', file)
 
-    const response =  await axios.post("http://localhost:4000/api/food", formData, {
+    const response =  await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/food`, formData, {
       withCredentials: true,
     })
 navigate('/')

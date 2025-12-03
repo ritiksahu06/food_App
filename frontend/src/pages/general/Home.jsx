@@ -12,7 +12,7 @@ const Home = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:4000/api/food", { withCredentials: true })
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/food`, { withCredentials: true })
       .then((response) => {
         setFoodItems(response.data.foodItems || []);
         // console.log("Fecting food vidoes successfully", response.data.foodItems);
@@ -27,7 +27,7 @@ const Home = () => {
 
   const handleLogout = async () => {
   try {
-    await axios.get("http://localhost:4000/api/auth/user/logout", {
+    await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/auth/user/logout`, {
       withCredentials: true
     });
 
@@ -41,7 +41,7 @@ const Home = () => {
 
   async function handleSave(item) {
     const response = await axios.post(
-      "http://localhost:4000/api/food/save",
+      `${import.meta.env.VITE_BACKEND_URL}/api/food/save`,
       { foodId: item._id },
       { withCredentials: true }
     );
@@ -62,7 +62,7 @@ const Home = () => {
 
   async function handleLike(item) {
     const response = await axios.post(
-      "http://localhost:4000/api/food/like",
+      `${import.meta.env.VITE_BACKEND_URL}/api/food/like`,
       { foodId: item._id },
       { withCredentials: true }
     );

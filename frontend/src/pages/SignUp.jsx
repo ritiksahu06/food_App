@@ -13,7 +13,7 @@ const SignUp = () => {
     const password = e.target.password.value;
 
     const response = await axios.post(
-      "http://localhost:4000/api/auth/user/register",
+      `${import.meta.env.VITE_BACKEND_URL}/api/auth/user/register`,
       {
         fullName: name,
         email,

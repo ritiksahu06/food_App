@@ -13,7 +13,7 @@ export const Login_FoodPartner = () => {
     const password = e.target.password.value;
 
     const response = await axios.post(
-      "http://localhost:4000/api/auth/food-partner/login",
+      `${import.meta.env.VITE_BACKEND_URL}/api/auth/food-partner/login`,
       {
         email,
         password,
