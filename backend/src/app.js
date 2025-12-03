@@ -9,12 +9,18 @@ const cors = require('cors');
 
 const app = express();
 
-
 // middleware
+
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL, //  change for render
     credentials: true
 }));
+
+// app.use(cors({
+//     origin: "http://localhost:5173",   // old code
+//     credentials: true
+// }));
+
 app.use(cookieParser())
 app.use(express.json())
 
@@ -22,11 +28,12 @@ app.get('/', (req, resp) => {
     resp.send("Systumm...")
 })
 
+app.get('/test', (req, res) => {
+  res.send("Backend is live!")
+})
+
 app.use('/api/auth', authRoutes)
 app.use('/api/food/', foodRoutes)
 app.use('/api/food-partner/', foodPartnerRoutes)
 
 module.exports = app;
-
-
-
