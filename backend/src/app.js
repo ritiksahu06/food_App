@@ -2,7 +2,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const authRoutes = require('./routes/auth.routes');
-const foodPartnerRoutes = require('./routes/food-parter.routes');
+const foodPartnerRoutes = require('./routes/food-partner.routes');
 const foodRoutes = require('./routes/food.routes');
 
 const app = express();
