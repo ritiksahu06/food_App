@@ -2,33 +2,31 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const authRoutes = require('./routes/auth.routes');
-const foodPartnerRoutes = require('./routes/food-partner.routes');
 const foodRoutes = require('./routes/food.routes');
+const foodPartnerRoutes = require('./routes/food-partner.routes');
 
 const app = express();
 
-// IMPORTANT: Trust proxy for Render
+// Trust proxy
 app.set('trust proxy', 1);
 
-// CORS Configuration - YE SABSE PEHLE HONA CHAHIYE
+// Allowed origins
 const allowedOrigins = [
     'https://food-app-seven-wheat.vercel.app',
     'http://localhost:5173',
     'http://localhost:3000'
 ];
 
-// Add environment variable if exists
-if (process.env.FRONTEND_URL) {
+if (process.env.FRONTEND_URL && !allowedOrigins.includes(process.env.FRONTEND_URL)) {
     allowedOrigins.push(process.env.FRONTEND_URL);
 }
 
-console.log('🌐 Allowed Origins:', allowedOrigins); // Debug ke liye
+console.log('🌐 Allowed Origins:', allowedOrigins);
 
+// CORS middleware - ye automatically preflight handle karega
 app.use(cors({
     origin: function (origin, callback) {
-        console.log('📍 Request from origin:', origin); // Debug
-        
-        // Allow requests with no origin (mobile apps, Postman, etc.)
+        // No origin means same-origin or tools like Postman
         if (!origin) return callback(null, true);
         
         if (allowedOrigins.indexOf(origin) !== -1) {
@@ -42,14 +40,10 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
     exposedHeaders: ['Set-Cookie'],
-    preflightContinue: false,
-    optionsSuccessStatus: 204
+    maxAge: 86400 // 24 hours preflight cache
 }));
 
-// Handle preflight requests explicitly
-app.options('*', cors());
-
-// Other middleware
+// Body parsers
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -59,31 +53,47 @@ app.get('/health', (req, res) => {
     res.json({ 
         status: 'OK',
         env: process.env.NODE_ENV,
-        frontendUrl: process.env.FRONTEND_URL,
         timestamp: new Date().toISOString()
     });
 });
 
 // Root route
 app.get('/', (req, res) => {
-    res.json({ message: "Food App Backend API" });
+    res.json({ 
+        message: "Food App Backend API",
+        version: "1.0.0"
+    });
 });
 
-// Your routes
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/food', foodRoutes);
 app.use('/api/food-partner', foodPartnerRoutes);
 
 // 404 handler
 app.use((req, res) => {
-    res.status(404).json({ error: "Route not found" });
+    res.status(404).json({ 
+        success: false,
+        error: "Route not found",
+        path: req.path 
+    });
 });
 
-// Error handler
+// Global error handler
 app.use((err, req, res, next) => {
     console.error('❌ Error:', err.message);
+    
+    if (err.message === 'Not allowed by CORS') {
+        return res.status(403).json({
+            success: false,
+            error: 'CORS error: Origin not allowed'
+        });
+    }
+    
     res.status(err.status || 500).json({
-        error: err.message || 'Internal Server Error'
+        success: false,
+        error: err.message || 'Internal Server Error',
+        ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
     });
 });
 
