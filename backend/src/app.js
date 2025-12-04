@@ -12,12 +12,9 @@ const app = express();
 // middleware
 
 app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://food-app-seven-wheat.vercel.app"
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  credentials: true
+  origin: ["https://your-frontend.vercel.app"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
 }));
 
 
