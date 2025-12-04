@@ -7,27 +7,53 @@ const Login = () => {
   
   const navigate = useNavigate();
   
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   const email = e.target.email.value;
+  //   const password = e.target.password.value;
+
+  //   const response = await axios.post(
+  //     `${import.meta.env.VITE_BACKEND_URL}/api/auth/user/login`,
+  //     {
+  //       email,
+  //       password,
+  //     },
+  //     {
+  //       withCredentials: true,
+  //     }
+  //   );
+
+  //   console.log(response.data);
+
+  //   navigate("/");
+  // };
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const email = e.target.email.value;
-    const password = e.target.password.value;
+  const email = e.target.email.value;
+  const password = e.target.password.value;
 
+  try {
     const response = await axios.post(
       `${import.meta.env.VITE_BACKEND_URL}/api/auth/user/login`,
-      {
-        email,
-        password,
-      },
-      {
-        withCredentials: true,
-      }
+      { email, password },
+      { withCredentials: true }
     );
 
     console.log(response.data);
 
+    // Save user in localStorage so Home.jsx knows login status
+    localStorage.setItem("user", JSON.stringify(response.data.user));
+
+    // Navigate to Home
     navigate("/");
-  };
+  } catch (error) {
+    console.error(error);
+    alert(error.response?.data?.message || "Login failed");
+  }
+};
 
   return (
     <div className="flex bg-gray-200 justify-center items-center min-h-screen">
