@@ -39,7 +39,8 @@ const Home = () => {
     });
 
     // Redirect to login
-    window.location.href = "/user/login";
+    // window.location.href = "/user/login";
+    navigate('/')
   } catch (error) {
     console.log(error);
   }
