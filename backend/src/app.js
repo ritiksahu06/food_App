@@ -1,42 +1,57 @@
-//   Create Server   
-
+// src/app.js
 const express = require('express');
-const cookieParser = require('cookie-parser')
-const authRoutes = require('./routes/auth.routes')
-const foodPartnerRoutes = require('./routes/food-parter.routes')
-const foodRoutes = require('./routes/food.routes')
+const cookieParser = require('cookie-parser');
+const authRoutes = require('./routes/auth.routes');
+const foodPartnerRoutes = require('./routes/food-parter.routes');
+const foodRoutes = require('./routes/food.routes');
 const cors = require('cors');
 
 const app = express();
 
-// middleware
+// ----------------------
+// MIDDLEWARE
+// ----------------------
 
-app.use(cors({
-  origin: ["https://your-frontend.vercel.app"],
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true,
-}));
+// CORS: allow your frontend
+app.use(
+  cors({
+    origin: ["https://your-frontend.vercel.app"], // add localhost if needed for dev
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
+// Parse cookies
+app.use(cookieParser());
 
+// Parse JSON requests
+app.use(express.json());
 
-// app.use(cors({
-//     origin: "http://localhost:5173",   // old code
-//     credentials: true
-// }));
+// ----------------------
+// ROUTES
+// ----------------------
 
-app.use(cookieParser())
-app.use(express.json())
-
-app.get('/', (req, resp) => {
-    resp.send("Systumm...")
-})
+// Simple health check
+app.get('/', (req, res) => {
+  res.send("Systumm...");
+});
 
 app.get('/test', (req, res) => {
-  res.send("Backend is live!")
-})
+  res.send("Backend is live!");
+});
 
-app.use('/api/auth', authRoutes)
-app.use('/api/food/', foodRoutes)
-app.use('/api/food-partner/', foodPartnerRoutes)
+// API routes
+app.use('/api/auth', authRoutes);
+app.use('/api/food', foodRoutes);
+app.use('/api/food-partner', foodPartnerRoutes);
+
+// ----------------------
+// 404 HANDLER (Wildcard)
+// ----------------------
+
+// Replace old `*` with `/*` for Express v5
+app.use("/*", (req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
 
 module.exports = app;
