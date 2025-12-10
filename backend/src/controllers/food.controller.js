@@ -18,7 +18,7 @@ async function createFood(req, resp) {
     foodPartner: req.foodPartner._id,
   });
 
-  resp.status(201).json({
+  return resp.status(201).json({
     message: "Food created successfully...",
     food: foodItem,
   });
@@ -53,13 +53,13 @@ async function getFoodItems(req, resp) {
       }));
     }
 
-    resp.status(200).json({
+    return resp.status(200).json({
       message: "Food items fetch successfully...",
       foodItems: foodWithLikes,
     });
   } catch (err) {
     console.error("Error in getFoodItems:", err);
-    resp.status(500).json({ message: "Server error" });
+    return resp.status(500).json({ message: "Server error" });
   }
 }
 
@@ -95,7 +95,7 @@ async function likeFood(req, resp) {
     $inc: { likeCount: 1 },
   });
 
-  resp.status(201).json({
+  return resp.status(201).json({
     message: "Food Like successfully...",
     like,
     isLiked: true 
@@ -135,7 +135,7 @@ async function saveFood(req, resp) {
     $inc: {saveCount: 1},
   })
 
-  resp.status(201).json({
+  return resp.status(201).json({
     message: "Food save successfully...",
     isSave: true,
   })
@@ -167,10 +167,10 @@ async function getSavedFood(req, resp) {
       })
     );
 
-    resp.status(200).json({ message: "Saved food retrieved successfully", saveFood });
+    return resp.status(200).json({ message: "Saved food retrieved successfully", saveFood });
   } catch (err) {
     console.error("Error in getSavedFood:", err);
-    resp.status(500).json({ message: "Server error" });
+    return resp.status(500).json({ message: "Server error" });
   }
 }
 
